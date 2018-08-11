@@ -1,0 +1,20 @@
+{
+    "name": "EasyBlock",
+    "version": "1.0",
+    "description": "Block sites very easy.",
+		"options_page": "options2.html",
+		"browser_action": {
+ 			"default_popup": "options2.html"
+		},
+    "icons": {
+        "16": "images/lockicon_16.png",
+        "32": "images/lockicon_32.png",
+        "48": "images/lockicon_48.png",
+        "128": "images/lockicon_128.png"
+    },
+    "permissions": ["activeTab", "declarativeContent", "storage", "webRequest", "webRequestBlocking", "*://*/*"],
+		"background": {
+				"scripts": ["bg.js"]
+		},
+    "manifest_version": 2
+}

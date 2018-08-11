@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<style>
+			textarea {
+				outline: none;
+				resize: none;
+				border: 2px solid #DCDCDC;
+				border-style: groove;
+				border-radius: 3px;
+				font-size: 12px;
+				margin-left: 10px;
+				margin-bottom: 10px;
+				margin-right: 10px;
+			}
+			h1 {
+				font-size: 15px;
+			}
+			body {
+
+			}
+		</style>
+
+	</head>
+	<body>
+		<div>
+			<h1 id="title">Specify blocked sites!</p>
+		</div>
+		<div id="blockedSitesDiv">
+			<textarea rows="12" cols="60" id="blockedSitesText"></textarea><br>
+			<input type="checkbox" name="enabled" id="enabeledCheckbox">Enabled<br>
+			<br>
+		</div>
+
+		<div id="status"></div>
+		<button id="save">Save</button>
+
+	</body>
+	<script src="options.js"></script>
+</html>
