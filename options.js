@@ -1,89 +1,103 @@
-var enabled = false;
-var blockedSitesArray = [];
 
-function save_options() {
-	console.log("save_options called");
-
-	var blockedSitesString = document.getElementById('blockedSitesText').value;
-	var enabeledCheckboxStatus = document.getElementById('enabeledCheckbox').checked;
-
-	enabled = enabeledCheckboxStatus;
-	blockedSitesArray = [];
-
-	var lines = blockedSitesString.split('\n');
-	for(var i = 0; i < lines.length; i++){
-		// console.log(lines[i]);
-		if (lines[i].trim() != "") {
-			if (lines[i].trim().startsWith("*://www.") && lines[i].trim().endsWith("/*")) {
-				blockedSitesArray.push(lines[i].trim());
-			} else {
-				var url = makeFormattedUrl(lines[i].trim());
-				if (url && url != "") {
-					blockedSitesArray.push(url);
-				}
-			}
-		}
-	}
-
-	localStorage.setItem('blockedSites', JSON.stringify(blockedSitesArray));
-	localStorage.setItem('enabled', JSON.stringify(enabeledCheckboxStatus));
-	chrome.runtime.reload(); // Makes bg.js run again, renews listener
+if (localStorage.getItem('blockedSites') == null) {
+	localStorage.setItem('blockedSites', JSON.stringify([]));
 }
 
-function restore_options() {
-	console.log("restore_options called");
+document.getElementById("addBtn").onclick = function () {
+	newElement();
+};
 
-	var sitesArr = JSON.parse(localStorage.getItem('blockedSites'));
-	var enabled = JSON.parse(localStorage.getItem('enabled'));
-	console.log(sitesArr);
-	console.log(enabled);
-
-	var blockedSitesString = "";
-	for (var site in sitesArr) {
-		var siteStr = sitesArr[site];
-		if (siteStr.trim() != "") {
-			blockedSitesString += siteStr + "\n";
-		}
-	}
-	document.getElementById("blockedSitesText").value = blockedSitesString;
-	document.getElementById("enabeledCheckbox").checked = enabled;
-
+document.body.onload = function () {
+	displayList();
 }
 
-function makeFormattedUrl(url) {
+document.getElementById("addInput").addEventListener("keyup", function(event) {
+  event.preventDefault();
+  if (event.keyCode === 13) { // KeyCode 13 = Enter key
+    newElement();
+  }
+});
 
-	var start = "*://www.";
-	var end = "/*";
+displayList();
 
-	var result = "";
-
-	if (url.startsWith(start)) {
-		result += url;
-	} else if (url.startsWith("www.")) {
-		result = "*://" + url;
-	} else if (url.startsWith("http://www.")) {
-		result = url.replace("http://", "*://")
-	} else if (url.startsWith("https://www.")) {
-		result = url.replace("https://", "*://")
-	} else if (url.startsWith("http://")) {
-		result = url.replace("http://", "*://www.")
-	} else if (url.startsWith("https://")) {
-		result = url.replace("https://", "*://www.")
-	} else {
-		result = start + url;
+function newElement() {
+	console.log("newElement called");
+	var inputValue = document.getElementById("addInput").value;
+	document.getElementById("addInput").value = "";
+	if (inputValue.trim() != "") {
+		saveSite(inputValue);
 	}
-
-	if (!url.endsWith("/*")) {
-		if (url.endsWith("/")) {
-			result += "*";
-		} else {
-			result += "/*";
-		}
-	}
-
-
-	return result;
+	displayList();
 }
 
-document.addEventListener('DOMContentLoaded', restore_options);
-document.getElementById('save').addEventListener('click', save_options);
+function saveSite(siteStr) {
+	var list = JSON.parse(localStorage.getItem('blockedSites'));
+	list.push({site: siteStr, toggle: true});
+	console.log(list);
+	localStorage.setItem('blockedSites', JSON.stringify(list));
+}
+
+function displayList() {
+	var list = JSON.parse(localStorage.getItem('blockedSites'));
+	console.log("Should display list :" + list);
+	console.log(typeof(list));
+	var htmlUL = document.getElementById("siteList");
+	htmlUL.innerHTML = "";
+	for (var i = 0; i < list.length; i++) {
+		var item = list[i];
+		var li = document.createElement("li");
+		li.value = i;
+
+		var span = document.createElement("SPAN");
+		span.className = "elementSite";
+
+		var siteStr = document.createTextNode(item.site);
+		
+		var checkbox = document.createElement("INPUT");
+		checkbox.setAttribute("type", "checkbox");
+		checkbox.setAttribute("class", "checkbox")
+		checkbox.checked = item.toggle;
+		checkbox.onchange = function () {
+			var elementIndex = this.parentElement.value;
+			var isEnabled = this.checked;
+
+			var list = getSiteList();
+			list[elementIndex].toggle = isEnabled;
+
+			setSiteList(list);
+		}
+
+		var spanClose = document.createElement("SPAN");
+	  var txt = document.createTextNode("\u00D7");
+	  spanClose.className = "close";
+	  spanClose.appendChild(txt);
+		spanClose.onclick = function () {
+			var elementIndex = this.parentElement.value;
+			removeElement(elementIndex);
+			displayList();
+		}
+
+
+		li.append(checkbox);
+		span.appendChild(siteStr);
+		li.appendChild(span);
+		li.appendChild(spanClose);
+		htmlUL.appendChild(li);
+	}
+}
+
+
+function getSiteList() {
+	var list = JSON.parse(localStorage.getItem('blockedSites'));
+	return list;
+}
+
+function setSiteList(siteList) {
+	localStorage.setItem('blockedSites', JSON.stringify(siteList));
+}
+
+function removeElement(index) {
+	var list = getSiteList();
+	list.splice(index, 1);
+	setSiteList(list);
+}

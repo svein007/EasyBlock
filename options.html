@@ -1,40 +1,22 @@
 <!DOCTYPE html>
-<html>
+<html lang="en" dir="ltr">
 	<head>
-		<style>
-			textarea {
-				outline: none;
-				resize: none;
-				border: 2px solid #DCDCDC;
-				border-style: groove;
-				border-radius: 3px;
-				font-size: 12px;
-				margin-left: 10px;
-				margin-bottom: 10px;
-				margin-right: 10px;
-			}
-			h1 {
-				font-size: 15px;
-			}
-			body {
-
-			}
-		</style>
-
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" href="options.css">
 	</head>
+
 	<body>
-		<div>
-			<h1 id="title">Specify blocked sites!</p>
-		</div>
-		<div id="blockedSitesDiv">
-			<textarea rows="12" cols="60" id="blockedSitesText"></textarea><br>
-			<input type="checkbox" name="enabled" id="enabeledCheckbox">Enabled<br>
-			<br>
-		</div>
+		<div id="outer">
+			<div id="addDiv" class="header">
+			  <h2>Blocked Sites</h2>
+			  <input type="text" id="addInput" placeholder="Add url (e.g. bbc.com) ">
+			  <span id="addBtn" class="addBtn">Add</span>
+			</div>
 
-		<div id="status"></div>
-		<button id="save">Save</button>
-
+			<ul id="siteList">
+			</ul>
+	  </div>
+		<script src="options.js"></script>
 	</body>
-	<script src="options.js"></script>
 </html>

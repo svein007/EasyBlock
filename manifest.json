@@ -2,9 +2,9 @@
     "name": "EasyBlock",
     "version": "1.0",
     "description": "Block sites very easy.",
-		"options_page": "options2.html",
+		"options_page": "options.html",
 		"browser_action": {
- 			"default_popup": "options2.html"
+ 			"default_popup": "options.html"
 		},
     "icons": {
         "16": "images/lockicon_16.png",
